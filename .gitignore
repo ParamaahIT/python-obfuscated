@@ -1,0 +1,8 @@
+# Ignore everything
+hello
+backend
+.venv
+runtime_tmp
+pyarmor.bug.log
+.git
+
