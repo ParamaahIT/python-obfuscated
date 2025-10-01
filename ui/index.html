@@ -1,80 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PyArmor Interactive UI</title>
-<style>
-body{font-family:Inter,system-ui,Arial;background:#eef2f7;margin:0;padding:0;}
-header{background:#6366f1;color:#fff;padding:16px;text-align:center;font-size:1.5em;}
-.container{max-width:700px;margin:20px auto;padding:16px;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.08);}
-input, select{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-top:8px;margin-bottom:12px;}
-button{padding:10px 16px;border:none;border-radius:8px;background:linear-gradient(90deg,#6366f1,#ec4899);color:#fff;font-weight:bold;cursor:pointer;margin-right:8px;}
-#history{margin-top:12px;border-top:1px solid #eee;padding-top:12px;max-height:200px;overflow:auto;font-size:14px;}
-.loader{display:none;margin-left:8px;border:4px solid #f3f3f3;border-top:4px solid #6366f1;border-radius:50%;width:16px;height:16px;animation:spin 1s linear infinite;vertical-align:middle;}
-@keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-.alert{color:red;font-weight:bold;margin-top:8px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Obfuscation POC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .btn-custom {
+      background-color: #ff9800;
+      color: white;
+      font-weight: bold;
+    }
+    .btn-custom:hover {
+      background-color: #e68900;
+    }
+  </style>
 </head>
 <body>
-<header>PyArmor Interactive UI</header>
-<div class="container">
-<label for="name">Enter Name:</label>
-<input id="name" placeholder="World"/>
-<label for="style">Greeting Style:</label>
-<select id="style">
-<option value="normal">Normal</option>
-<option value="excited">Excited</option>
-<option value="formal">Formal</option>
-</select>
-<div>
-<button id="greet">Get Greeting</button>
-<div class="loader" id="loader"></div>
-</div>
-<div class="alert" id="alert"></div>
-<div id="response" style="margin-top:12px;font-weight:bold;"></div>
-<div id="history"><strong>Previous greetings:</strong><ul id="hist-list"></ul></div>
-</div>
-
-<script>
-const nameInput = document.getElementById('name');
-const styleSelect = document.getElementById('style');
-const greetBtn = document.getElementById('greet');
-const respDiv = document.getElementById('response');
-const histList = document.getElementById('hist-list');
-const loader = document.getElementById('loader');
-const alertBox = document.getElementById('alert');
-
-greetBtn.onclick = async () => {
-    alertBox.textContent = '';
-    const name = nameInput.value.trim() || 'World';
-    const style = styleSelect.value;
-    loader.style.display = 'inline-block';
-    try {
-        const res = await fetch('/api/greet',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({name})
-        });
-        const data = await res.json();
-        let greeting = data.greeting || 'Hello';
-        if(style === 'excited') greeting += ' 🎉';
-        if(style === 'formal') greeting = 'Good day, ' + name;
-        respDiv.textContent = greeting;
-        const li = document.createElement('li'); li.textContent = greeting;
-        histList.prepend(li);
-    } catch(err){
-        alertBox.textContent = 'Error: '+err.message;
-    } finally{
-        loader.style.display='none';
-    }
-}
-
-// Live update (optional)
-nameInput.addEventListener('keyup', e => {
-    if(e.key === 'Enter') greetBtn.click();
-});
-</script>
+  <div class="container text-center">
+    <div class="card p-5 bg-dark">
+      <h1 class="mb-3">🚀 Python Obfuscation POC</h1>
+      <p class="lead">POC - Obfuscating Python Code</p>
+      <hr class="my-4 text-white">
+      <h3 class="mb-3">Try It</h3>
+      <a href="/hello" class="btn btn-custom btn-lg">Say Hello 👋</a>
+      <a href="/goodbye" class="btn btn-light btn-lg ms-3">Say Goodbye 👋</a>
+      <hr class="my-4 text-white">
+      <footer>
+        <p>Made with ❤️ for POC Demonstration</p>
+      </footer>
+    </div>
+  </div>
 </body>
 </html>
 

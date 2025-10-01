@@ -6,7 +6,7 @@ pipeline {
         PORT = "5000"
 	IMAGE_NAME = 'prashanth2paramaah/python-obfus-poc:latest'
         VAULT_CRED_ID = 'vault-approle-creds'
-        VAULT_ADDR    = 'http://3.80.154.126:8200'
+        VAULT_ADDR    = 'http://13.222.142.110:8200'
     }
 
     stages {
