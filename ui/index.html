@@ -1,48 +1,211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Python Obfuscation POC</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    .btn-custom {
-      background-color: #ff9800;
-      color: white;
-      font-weight: bold;
-    }
-    .btn-custom:hover {
-      background-color: #e68900;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PyArmor POC — Interactive UI</title>
+<style>
+  :root{
+    --bg1:#f0f9ff; --card:#ffffff;
+    --accent1:#7c3aed; --accent2:#06b6d4;
+    --muted:#6b7280;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,var(--bg1),white);color:#0f172a}
+  .wrap{max-width:920px;margin:36px auto;padding:20px}
+  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.06);border:1px solid rgba(15,23,42,0.04);display:grid;grid-template-columns:1fr 340px;gap:18px}
+  header{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
+  label{display:block;margin-top:12px;font-size:13px;color:#111}
+  input[type="text"], select{width:100%;padding:10px;border-radius:10px;border:1px solid #e6eef8;font-size:14px;box-sizing:border-box}
+  .controls{display:flex;gap:10px;margin-top:12px}
+  button.primary{flex:1;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;font-weight:700;cursor:pointer}
+  button.ghost{padding:10px 12px;border-radius:10px;border:1px solid #e6eef8;background:white;cursor:pointer}
+  .status{margin-top:10px;font-size:13px;color:var(--muted)}
+  .out{margin-top:14px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#f8fafc,#ffffff);border:1px solid #eef2ff;font-size:15px}
+  .right{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:14px;border-radius:12px;border:1px solid rgba(15,23,42,0.03)}
+  .history{max-height:320px;overflow:auto;padding:8px;border-radius:8px;background:#fbfdff;border:1px solid #eef6fb}
+  .hist-item{padding:8px;border-radius:8px;margin-bottom:8px;background:white;border:1px solid #eef2ff}
+  .muted{color:var(--muted);font-size:13px}
+  .loader{display:inline-block;width:18px;height:18px;border-radius:50%;border:3px solid rgba(0,0,0,0.08);border-top-color:var(--accent1);animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .toast{position:fixed;right:20px;bottom:20px;background:#111;color:white;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(2,6,23,0.16);display:none}
+  @media (max-width:900px){ .card{grid-template-columns:1fr} .right{order:2} }
+</style>
 </head>
 <body>
-  <div class="container text-center">
-    <div class="card p-5 bg-dark">
-      <h1 class="mb-3">🚀 Python Obfuscation POC</h1>
-      <p class="lead">POC - Obfuscating Python Code</p>
-      <hr class="my-4 text-white">
-      <h3 class="mb-3">Try It</h3>
-      <a href="/hello" class="btn btn-custom btn-lg">Say Hello 👋</a>
-      <a href="/goodbye" class="btn btn-light btn-lg ms-3">Say Goodbye 👋</a>
-      <hr class="my-4 text-white">
-      <footer>
-        <p>Made with ❤️ for POC Demonstration</p>
-      </footer>
+  <div class="wrap">
+    <div class="card" role="main" aria-label="PyArmor PoC UI">
+      <div>
+        <header>
+          <div class="logo">PY</div>
+          <div>
+            <h1>Obfuscated Backend — Interactive UI</h1>
+            <p class="lead">Calls your obfuscated Flask endpoints and displays responses.</p>
+          </div>
+        </header>
+
+        <label for="name">Name</label>
+        <input id="name" type="text" placeholder="World" aria-label="Name" />
+
+        <label for="style">Greeting style</label>
+        <select id="style" aria-label="Greeting style">
+          <option value="normal">Normal</option>
+          <option value="excited">Excited</option>
+          <option value="formal">Formal</option>
+        </select>
+
+        <div class="controls">
+          <button id="call" class="primary">Get greeting</button>
+          <button id="demo" class="ghost">Auto Demo</button>
+          <button id="clear" class="ghost">Clear</button>
+        </div>
+
+        <div class="status" id="status">Backend: <strong id="online">checking…</strong></div>
+
+        <div class="out" id="out" style="display:none;">
+          <div style="font-size:13px;color:#0f172a;font-weight:700">Response</div>
+          <div id="resp" style="margin-top:8px;white-space:pre-wrap"></div>
+        </div>
+      </div>
+
+      <aside class="right" aria-label="Side panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="muted">Recent activity</div>
+          <div class="muted">v1.0</div>
+        </div>
+
+        <div style="margin-top:12px" class="history" id="history">
+          <!-- history items injected here -->
+        </div>
+
+        <div style="margin-top:12px" class="muted">
+          <div><strong>Notes</strong></div>
+          <div style="margin-top:6px">UI calls <code>/api/greet</code> by default. You can change calls to <code>/hello/greet</code> if you prefer blueprint endpoint.</div>
+        </div>
+      </aside>
     </div>
   </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+/* Interactive behaviour: uses only standard browser APIs */
+const nameInput = document.getElementById('name');
+const styleSelect = document.getElementById('style');
+const callBtn = document.getElementById('call');
+const demoBtn = document.getElementById('demo');
+const clearBtn = document.getElementById('clear');
+const outBox = document.getElementById('out');
+const resp = document.getElementById('resp');
+const statusEl = document.getElementById('online');
+const historyEl = document.getElementById('history');
+const toast = document.getElementById('toast');
+
+let history = [];
+
+/* small helper to show toast */
+function showToast(msg, timeout=3000){
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(()=>{ toast.style.display = 'none'; }, timeout);
+}
+
+/* status check */
+async function checkHealth(){
+  try{
+    const r = await fetch('/api/health', {method:'GET'});
+    if(r.ok){ statusEl.textContent = 'online'; statusEl.style.color='green'; }
+    else { statusEl.textContent = 'offline'; statusEl.style.color='red'; }
+  }catch(e){
+    statusEl.textContent = 'offline'; statusEl.style.color='red';
+  }
+}
+
+/* render history */
+function renderHistory(){
+  historyEl.innerHTML = '';
+  if(history.length===0){
+    historyEl.innerHTML = '<div class="muted">No greetings yet</div>';
+    return;
+  }
+  history.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 'hist-item';
+    div.innerHTML = `<div style="font-weight:700">${escapeHtml(item.greeting)}</div>
+                     <div class="muted" style="margin-top:6px;font-size:12px">${escapeHtml(item.ts)}</div>`;
+    historyEl.appendChild(div);
+  });
+}
+
+/* safe escaping */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+/* call API */
+async function callGreet(name){
+  outBox.style.display='none';
+  resp.textContent = '';
+  callBtn.disabled = true;
+  const loader = document.createElement('span'); loader.className='loader'; callBtn.appendChild(loader);
+  try{
+    const res = await fetch('/api/greet', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name })
+    });
+    const text = await res.text();
+    // try parse JSON
+    let json;
+    try{ json = JSON.parse(text); } catch(e){ json = null; }
+    let greeting = (json && json.greeting) ? json.greeting : text;
+    // apply style
+    const style = styleSelect.value;
+    if(style === 'excited') greeting = greeting + ' 🎉';
+    if(style === 'formal') greeting = 'Good day, ' + (name || 'Sir/Madam');
+    resp.textContent = greeting;
+    outBox.style.display='block';
+    // push to history
+    history.unshift({ greeting, ts: new Date().toLocaleString() });
+    if(history.length>20) history.pop();
+    renderHistory();
+  }catch(err){
+    showToast('Request failed: ' + err.message, 5000);
+  }finally{
+    callBtn.disabled = false;
+    if(callBtn.contains(loader)) callBtn.removeChild(loader);
+  }
+}
+
+/* demo control */
+demoBtn.addEventListener('click', async ()=>{
+  nameInput.value = 'World';
+  await callGreet('World');
+});
+
+/* clear history */
+clearBtn.addEventListener('click', ()=>{
+  history = [];
+  renderHistory();
+  showToast('History cleared', 1500);
+});
+
+/* main call button */
+callBtn.addEventListener('click', ()=>{
+  const name = (nameInput.value || '').trim() || 'World';
+  callGreet(name);
+});
+
+/* quick enter key */
+nameInput.addEventListener('keyup', (e)=>{ if(e.key==='Enter') callBtn.click(); });
+
+/* initial */
+checkHealth();
+renderHistory();
+setInterval(checkHealth, 6000);
+</script>
 </body>
 </html>
 
