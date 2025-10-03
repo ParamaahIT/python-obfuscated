@@ -3,91 +3,50 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PyArmor PoC — Web UI</title>
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <title>PyArmor POC — Simple UI</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-    :root{
-      --bg1:#eef2ff; --bg2:#fff7ed; --card:#ffffff;
-      --accent:linear-gradient(90deg,#6366f1,#ec4899);
-      --muted:#6b7280;
-    }
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    body{background:radial-gradient(circle at 10% 10%, #f8fafc 0%, #ffffff 40%), linear-gradient(180deg, var(--bg1), var(--bg2)); padding:32px; display:flex; align-items:center; justify-content:center;}
-    .wrap{width:100%;max-width:960px}
-    .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.08);border:1px solid rgba(15,23,42,0.04);display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start;}
-    header{display:flex;gap:14px;align-items:center}
-    .logo{width:56px;height:56px;border-radius:12px;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;}
-    h1{margin:0;font-size:20px}
-    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
-    .left{padding-right:6px}
-    label{display:block;font-size:13px;color:#111;margin-bottom:6px}
-    input[type="text"]{width:100%;padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:15px;box-sizing:border-box}
-    .controls{display:flex;gap:10px;margin-top:12px}
-    button.primary{background:linear-gradient(90deg,#6366f1,#ec4899);color:white;padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
-    button.ghost{background:white;border:1px solid #eef2f6;padding:10px 12px;border-radius:10px;cursor:pointer}
-    .status{margin-top:10px;font-size:13px;color:var(--muted)}
-    .out{margin-top:16px;padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #eef2f6;font-size:14px}
-    .right{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:14px;border-radius:12px;border:1px solid rgba(15,23,42,0.03)}
-    .small{font-size:13px;color:var(--muted)}
-    .demo{display:flex;flex-direction:column;gap:8px}
-    .chip{display:inline-block;padding:8px 10px;border-radius:999px;background:#f1f5f9;font-weight:600;font-size:13px}
-    footer{margin-top:14px;font-size:12px;color:var(--muted)}
-    @media (max-width:880px){ .card{grid-template-columns:1fr; } .right{order:2} }
+    :root{--bg:#f8fafc;--card:#fff;--accent:#6366f1;--muted:#6b7280}
+    body{font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#eef2ff,white);margin:0;padding:24px}
+    .wrap{max-width:720px;margin:32px auto}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(16,24,40,0.06);border:1px solid rgba(99,102,241,0.06)}
+    h1{margin:0 0 8px;font-size:20px;color:#0f172a}
+    p.lead{margin:0 0 14px;color:var(--muted);font-size:13px}
+    input[type="text"]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px;box-sizing:border-box}
+    .row{display:flex;gap:8px;margin-top:12px}
+    button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+    button.secondary{background:white;color:#111;border:1px solid #e6e9ef}
+    .result{margin-top:14px;padding:12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;color:#0f172a}
+    .status{font-size:12px;color:var(--muted);margin-top:8px}
+    pre{white-space:pre-wrap;margin:0;font-family:inherit;font-size:14px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card" role="main" aria-label="PyArmor PoC UI">
-      <div class="left">
-        <header>
-          <div class="logo">PY</div>
-          <div>
-            <h1>PyArmor Obfuscation — Demo UI</h1>
-            <p class="lead">Calls your obfuscated backend at <code>/api/greet</code> and shows the response.</p>
-          </div>
-        </header>
+    <div class="card">
+      <h1>Obfuscated backend — quick UI</h1>
+      <p class="lead">Enter a name and call the backend endpoint <code>/api/greet</code>. Backend must be running at <strong>http://localhost:5000</strong>.</p>
 
-        <div style="margin-top:12px">
-          <label for="name">Name</label>
-          <input id="name" type="text" placeholder="Alice" aria-label="Name" />
-          <div class="controls">
-            <button id="call" class="primary">Get greeting</button>
-            <button id="fill" class="ghost">Fill example</button>
-            <button id="demo" class="ghost">Auto demo</button>
-          </div>
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="Alice" />
 
-          <div class="status" id="status">Backend: <span id="online">checking…</span></div>
-
-          <div class="out" id="out" style="display:none;">
-            <div style="font-weight:700;margin-bottom:6px">Response</div>
-            <pre id="resp" style="margin:0;white-space:pre-wrap;font-family:inherit"></pre>
-          </div>
-        </div>
-
-        <footer>
-          <span class="small">Obfuscated runtime lives in <code>dist/hello</code>. Ensure Flask backend exposes <code>/api/greet</code> &amp; <code>/api/health</code>.</span>
-        </footer>
+      <div class="row">
+        <button id="call">Get greeting</button>
+        <button id="fill" class="secondary">Fill example</button>
       </div>
 
-      <aside class="right">
-        <div class="small" style="display:flex;justify-content:space-between;align-items:center">
-          <div>Quick tips</div>
-          <div class="chip" id="ver">v1</div>
-        </div>
+      <div class="status" id="status">Status: <span id="online">checking…</span></div>
 
-        <div style="margin-top:12px" class="demo">
-          <div><strong>Demo</strong><div class="small">Click Auto demo to prefill and call the backend automatically.</div></div>
-          <div><strong>Status check</strong><div class="small">This checks <code>/api/health</code> every 6s.</div></div>
-          <div><strong>Docker</strong><div class="small">To include UI in backend image, add <code>COPY ui /app/ui</code> and ensure Flask serves it.</div></div>
-        </div>
-      </aside>
+      <div class="result" id="out" style="display:none;">
+        <strong>Response:</strong>
+        <pre id="resp"></pre>
+      </div>
     </div>
   </div>
 
 <script>
 const statusEl = document.getElementById('online');
-const out = document.getElementById('out'), resp = document.getElementById('resp');
+const out = document.getElementById('out');
+const resp = document.getElementById('resp');
 const nameInput = document.getElementById('name');
 
 async function check() {
@@ -95,33 +54,30 @@ async function check() {
     const r = await fetch('/api/health', {method:'GET'});
     statusEl.textContent = r.ok ? 'online' : 'offline';
     statusEl.style.color = r.ok ? 'green' : 'red';
-  } catch(e){ statusEl.textContent='offline'; statusEl.style.color='red'; }
+  } catch(e) { statusEl.textContent='offline'; statusEl.style.color='red'; }
 }
 
-async function callGreet(name){
+document.getElementById('call').addEventListener('click', async ()=>{
   out.style.display='none'; resp.textContent='';
+  const name = nameInput.value.trim() || 'World';
   try {
     const r = await fetch('/api/greet', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name})
     });
     const txt = await r.text();
-    try { resp.textContent = JSON.stringify(JSON.parse(txt), null, 2); } catch(e) { resp.textContent = txt; }
+    let pretty;
+    try { pretty = JSON.stringify(JSON.parse(txt), null, 2); } catch(e){ pretty = txt; }
+    resp.textContent = pretty;
     out.style.display='block';
   } catch(err) {
-    resp.textContent = 'Error: ' + err.message; out.style.display='block';
+    resp.textContent = 'Error: '+err.message;
+    out.style.display='block';
   }
-}
-
-document.getElementById('call').addEventListener('click', ()=> {
-  const name = nameInput.value.trim() || 'World';
-  callGreet(name);
 });
+
 document.getElementById('fill').addEventListener('click', ()=>{ nameInput.value='World'; });
-
-document.getElementById('demo').addEventListener('click', async ()=> {
-  nameInput.value = 'World';
-  await callGreet('World');
-});
 
 check();
 setInterval(check, 6000);
